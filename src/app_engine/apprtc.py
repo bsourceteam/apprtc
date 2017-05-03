@@ -618,6 +618,18 @@ def checkIfRedirect(self):
     redirect_url = constants.REDIRECT_URL + self.request.path + parsed_args
     webapp2.redirect(redirect_url, permanent=True, abort=True)
 
+class TurnRequestHandler(webapp2.RequestHandler):
+    
+    def get(self):
+        key = self.request.get('key')
+        username = self.request.get('username')
+                
+        shared_key = 'SHARED_KEY_REPLACE'
+        turn_ip = 'TURN_IP_REPLACE'
+        turn_port = 'TURN_PORT_REPLACE'
+        self.response.out.write("{ \"username\":\"%s\", \"uris\": [ \"turn:%s:%s?transport=udp\", \"turn:%s:%s?transport=tcp\" ], \"password\":\"%s\", \"ttl\":86400 }" % (username, turn_ip, turn_port, turn_ip, turn_port, shared_key))
+
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/a/', analytics_page.AnalyticsPage),
@@ -627,4 +639,5 @@ app = webapp2.WSGIApplication([
     ('/message/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)', MessagePage),
     ('/params', ParamsPage),
     ('/r/([a-zA-Z0-9-_]+)', RoomPage),
+    ('/turn', TurnRequestHandler),
 ], debug=True)
